@@ -1,0 +1,82 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/ScrollView1"
+    android:background="#35465c" >
+
+<LinearLayout
+     android:id="@+id/LinearLayout0"
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+     android:padding="0px"
+     android:orientation="vertical" 
+        >
+    
+         
+<RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin" 
+    >
+    
+        <EditText
+            android:id="@+id/EditText1"
+            android:layout_width="match_parent"
+            android:layout_height="24dip"
+            android:ems="10" 
+            android:background="#FFFFFF" 
+            android:singleLine="true"
+            >
+        </EditText>    
+        
+        <Button
+            android:id="@+id/button1"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Explore" 
+            android:layout_below="@+id/EditText1"
+            android:layout_marginTop="5dp"
+            />
+
+        <Button
+            android:id="@+id/button2"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tag Search" 
+            android:layout_below="@+id/EditText1"
+            android:layout_toRightOf="@+id/button1"
+            android:layout_marginTop="5dp"
+            />
+        
+        <Button
+            android:id="@+id/button3"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Author Search" 
+            android:layout_below="@+id/EditText1"
+            android:layout_toRightOf="@+id/button2"
+            android:layout_marginTop="5dp"
+            />                
+</RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/LinearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:padding="0px"
+        android:orientation="vertical" 
+        android:layout_below="@+id/EditText1"
+        >
+
+
+    </LinearLayout>
+
+</LinearLayout>
+</ScrollView>
