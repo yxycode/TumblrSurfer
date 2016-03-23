@@ -251,7 +251,6 @@ for( i = 0; i < 2; i++ )
   inputstr = inputstr.replace( "\\u003E", ">" );
   inputstr = inputstr.replace("\\u2019", "'" );
 }
-  //inputstr = inputstr.replace( "", "" );
   
   return inputstr;
 } 
