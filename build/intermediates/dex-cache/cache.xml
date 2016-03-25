@@ -6,42 +6,42 @@
         jumboMode="false"
         revision="23.0.2"
         sha1="e4d0cbb0b999604b349062f0214a0a228a7fd151">
-        <dex dex="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-23.2.1_3ae6454f608e6dc9c9434f82f3176a03550bb501.jar" />
-    </item>
-    <item
-        jar="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\23.2.1\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.2"
-        sha1="673d77a5bbddd766037f088e775df525c46407f0">
-        <dex dex="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\pre-dexed\debug\com.android.support-support-vector-drawable-23.2.1_f59368598ce4ad622a818258c586a6de7ed351ec.jar" />
+        <dex dex="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\pre-dexed\release\com.android.support-appcompat-v7-23.2.1_3ae6454f608e6dc9c9434f82f3176a03550bb501.jar" />
     </item>
     <item
         jar="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.2.1\jars\classes.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="3be474b1b21b31cf2fa93fe6bd641ae108d96452">
-        <dex dex="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\pre-dexed\debug\com.android.support-support-v4-23.2.1_d15383ddd4667767f3420c7ac65e2eb922fea34a.jar" />
-    </item>
-    <item
-        jar="C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\23.2.1\support-annotations-23.2.1.jar"
-        jumboMode="false"
-        revision="23.0.2"
-        sha1="ccb693bc0774fcb637246f7360de25b4af7df318">
-        <dex dex="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\pre-dexed\debug\support-annotations-23.2.1_4d53806161c963d7085817c3ae8dd70af34d0268.jar" />
-    </item>
-    <item
-        jar="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\23.2.1\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.2"
-        sha1="3469cb457f10f74c28cbc05f069b6c894f6cbdd0">
-        <dex dex="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\pre-dexed\debug\com.android.support-animated-vector-drawable-23.2.1_1a0cf0a3936397e59545694746f61fe945e02e20.jar" />
+        <dex dex="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\pre-dexed\release\com.android.support-support-v4-23.2.1_d15383ddd4667767f3420c7ac65e2eb922fea34a.jar" />
     </item>
     <item
         jar="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.2.1\jars\libs\internal_impl-23.2.1.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="607a3d0b8013b4ccbfeb0b7cb293351994e021fb">
-        <dex dex="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\pre-dexed\debug\internal_impl-23.2.1_038ef39d3190caa1a678b67ac09e3a602109f80f.jar" />
+        <dex dex="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\pre-dexed\release\internal_impl-23.2.1_038ef39d3190caa1a678b67ac09e3a602109f80f.jar" />
+    </item>
+    <item
+        jar="C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\23.2.1\support-annotations-23.2.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="ccb693bc0774fcb637246f7360de25b4af7df318">
+        <dex dex="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\pre-dexed\release\support-annotations-23.2.1_4d53806161c963d7085817c3ae8dd70af34d0268.jar" />
+    </item>
+    <item
+        jar="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\23.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="3469cb457f10f74c28cbc05f069b6c894f6cbdd0">
+        <dex dex="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\pre-dexed\release\com.android.support-animated-vector-drawable-23.2.1_1a0cf0a3936397e59545694746f61fe945e02e20.jar" />
+    </item>
+    <item
+        jar="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\23.2.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="673d77a5bbddd766037f088e775df525c46407f0">
+        <dex dex="C:\Users\Inexis\StudioProjects\TumblrSurfer\app\build\intermediates\pre-dexed\release\com.android.support-support-vector-drawable-23.2.1_f59368598ce4ad622a818258c586a6de7ed351ec.jar" />
     </item>
 
 </items>
