@@ -36,6 +36,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+//import android.webkit.CookieManager;
 import java.net.CookieManager;
 import java.net.CookieHandler;
 import java.io.ByteArrayOutputStream;
@@ -61,6 +62,15 @@ import android.view.MotionEvent;
 import android.widget.ScrollView;
 import android.view.View.OnGenericMotionListener;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.io.DataOutputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.Scanner;
+
 //--------------------------------------------------------------------------------------------------
 
 public class MainActivity extends ActionBarActivity {
@@ -77,6 +87,7 @@ public class MainActivity extends ActionBarActivity {
         public final static int STATUS_LOADING = 1;
         public final static int STATUS_DONE = 2;
         public final static int STATUS_NULL_STREAM = 3;
+        public final static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36";
 
         private ProgressDialog ProgressDialogObj;
 
@@ -84,77 +95,133 @@ public class MainActivity extends ActionBarActivity {
 
         public byte[][] ByteArrayList = new byte[MAX_INPUTSTREAM_COUNT][];
         public int ByteArrayListStatus[] = new int[MAX_INPUTSTREAM_COUNT];
+        public String[][] HeaderList = new String[MAX_INPUTSTREAM_COUNT][];
+        protected short ByteArrayListIndex = 0;
 
         public Context ItsContext;
         public int ResponseCode = 0;
+        protected CookieManager ItsCookieManager;
+        protected String ItsCookie = "";
 
         //--------------------------------------------------------------------------------------------------
         public Internet(Context itscontext )
         {
-            CookieManager cookieManager = new CookieManager();
-            CookieHandler.setDefault(cookieManager);
+            ItsCookieManager = new CookieManager();
+            CookieHandler.setDefault(ItsCookieManager);
 
             int i;
             for( i = 0; i < MAX_INPUTSTREAM_COUNT; i++ )
+            {
                 ByteArrayListStatus[i] = STATUS_EMPTY;
+                ByteArrayList[i] = new byte[1];
+                HeaderList[i] = new String[1];
+            }
 
             ItsContext = itscontext;
 
         }
 
         //--------------------------------------------------------------------------------------------------
-        private InputStream OpenHttp(String urlstr, int connecttype, String arguments )
+        private void SaveCookie( String header )
         {
-            InputStream in = null;
-            int resCode = -1;
+            String[] headercopy = { "" };
+            String tempstr = "";
 
-            try {
-                URL url = new URL(urlstr);
-                URLConnection UrlConnect = url.openConnection();
+            headercopy[0] = new String(header);
+            tempstr = StrCut( "Set-Cookie, [", "]", headercopy );
 
-                if (!(UrlConnect instanceof HttpURLConnection)) {
-                    throw new IOException("Not http url!");
-                }
-                HttpURLConnection HttpConnect = (HttpURLConnection) UrlConnect;
-                HttpConnect.setAllowUserInteraction(false);
-                HttpConnect.setInstanceFollowRedirects(true);
+            if( tempstr != null )
+                if( tempstr.length() >= 3 )
+                    ItsCookie = tempstr;
+        }
+        //--------------------------------------------------------------------------------------------------
+        private String OpenHttp(String urlstr, int connecttype, String arguments, String[] headerout ) throws Exception
+        {
 
-                HttpConnect.setConnectTimeout(5000);
-                HttpConnect.setReadTimeout(10000);
+            if( connecttype == HTTP_GET )
+            {
+                URL obj = new URL(urlstr);
+                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-                if( connecttype == HTTP_GET )
-                {
-                    HttpConnect.setDoOutput(false);
-                    HttpConnect.setRequestMethod("GET");
-                }
-                else
-                if( connecttype == HTTP_POST )
-                {
-                    HttpConnect.setDoOutput(true);
-                    HttpConnect.setRequestMethod("POST");
-                    HttpConnect.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                    HttpConnect.setRequestProperty("Content-Length", String.valueOf(arguments.getBytes().length));
-                    HttpConnect.getOutputStream().write(arguments.getBytes());
-                }
+                // optional default is GET
+                con.setRequestMethod("GET");
 
-                HttpConnect.connect();
-                resCode = HttpConnect.getResponseCode();
+                //add request header
+                con.setRequestProperty("User-Agent", USER_AGENT);
+                con.setRequestProperty("Cookie", ItsCookie);
+                con.setFollowRedirects(true);
 
-                ResponseCode = resCode;
+                int responseCode = con.getResponseCode();
 
-                if (resCode == HttpURLConnection.HTTP_OK)
-                    in = HttpConnect.getInputStream();
+                BufferedReader in = new BufferedReader( new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
 
+                while ((inputLine = in.readLine()) != null)
+                    response.append(inputLine);
+                in.close();
+
+                if (responseCode == HttpURLConnection.HTTP_OK)
+                    headerout[0] = GetHeader(con);
+
+                SaveCookie(headerout[0]);
+                con.disconnect();
+                return response.toString();
             }
+            else
+            if( connecttype == HTTP_POST )
+            {
+                URL obj = new URL(urlstr);
+                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-            catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
+                //add reuqest header
+                con.setRequestMethod("POST");
+                con.setRequestProperty("User-Agent", USER_AGENT);
+                con.setRequestProperty("Cookie", ItsCookie);
+                con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+                con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                con.setRequestProperty("Content-Length", String.valueOf(arguments.length()));
+                con.setFollowRedirects(true);
 
-            catch (IOException e) {
-                e.printStackTrace();
+                // Send post request
+                con.setDoOutput(true);
+                DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+                wr.writeBytes(arguments);
+                wr.flush();
+
+
+                int responseCode = con.getResponseCode();
+
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null)
+                    response.append(inputLine);
+
+                in.close();
+                wr.close();
+
+                //if (responseCode == HttpURLConnection.HTTP_OK)
+                headerout[0] = "ResponseCode, [" + responseCode + "]; " + GetHeader(con) + "; " + response.toString();
+
+                SaveCookie(headerout[0]);
+                con.disconnect();
+                return response.toString();
             }
-            return in;
+            return null;
+        }
+        //--------------------------------------------------------------------------------------------------
+        protected String GetHeader( HttpURLConnection httpc )
+        {
+            Map<String, List<String>> hdrs = httpc.getHeaderFields();
+            Set<String> hdrKeys = hdrs.keySet();
+            String outstr = "";
+
+            for (String k : hdrKeys)
+                outstr = outstr + k + ", " + hdrs.get(k) + ";";
+            return outstr;
         }
         //--------------------------------------------------------------------------------------------------
         protected void GotoUrl(final String urlstr, final int connecttype, final String arguments, final short arrayindex )
@@ -162,33 +229,42 @@ public class MainActivity extends ActionBarActivity {
 
             //ProgressDialogObj = ProgressDialog.show( ItsContext, "", "Downloading..." );
             final String url = urlstr;
+            final String[] headerout = { "" };
+            final String[] outputstr = { "" };
 
             new Thread() {
                 public void run() {
-                    InputStream in = null;
+
 
                     Message msg = Message.obtain();
                     msg.what = 1;
 
                     try {
-                        in = OpenHttp(url, connecttype, arguments );
+                        outputstr[0] = OpenHttp(url, connecttype, arguments, headerout );
 
-                        if( in == null )
+                        if( outputstr[0] == null )
                         {
                             ByteArrayListStatus[arrayindex] = STATUS_NULL_STREAM;
+                            HeaderList[arrayindex][0] = new String(headerout[0]);
                             return;
                         }
 
                         ByteArrayListStatus[arrayindex] = STATUS_LOADING;
-                        ByteArrayList[arrayindex] = InputStream2ByteArray(in);
+                        ByteArrayList[arrayindex] = outputstr[0].getBytes(Charset.forName("UTF-8"));
+                        HeaderList[arrayindex][0] = new String(headerout[0]);
                         Bundle b = new Bundle();
-                        b.putShort("arrayindex", (short)arrayindex );
-                        msg.setData(b);
-                        in.close();
+                        ByteArrayListIndex = arrayindex;
+/*
+               b.putShort("arrayindex", (short)arrayindex );
+               msg.setData(b);
+*/
                     }
 
                     catch (IOException e1) {
                         e1.printStackTrace();
+                    }
+                    catch (Exception e) {
+
                     }
                     messageHandler.sendMessage(msg);
                 }
@@ -200,13 +276,13 @@ public class MainActivity extends ActionBarActivity {
             public void handleMessage(Message msg)
             {
                 super.handleMessage(msg);
-                short arrayindex = msg.getData().getShort("arrayindex");
+                short arrayindex = ByteArrayListIndex; //msg.getData().getShort("arrayindex");
                 ByteArrayListStatus[arrayindex] = STATUS_DONE;
                 //ProgressDialogObj.dismiss();
             }
         };
         //--------------------------------------------------------------------------------------------------
-        public byte[] InputStream2ByteArray(InputStream input) throws IOException
+        protected byte[] InputStream2ByteArray(InputStream input) throws IOException
         {
             byte[] buffer = new byte[1000];
             int bytesRead;
@@ -403,6 +479,8 @@ public class MainActivity extends ActionBarActivity {
     class Tumblr
     {
         public String api_key = "AjL8Cs5M0BEvbAu8Xc8KlaYWu03BNmLYd3qCxVJFi2GNC6PGQE";
+        public String consumer_key = api_key;
+        public String consumer_secret = "ouKrGUhBKc5bEXgKeGEDMhU6JcJWBDUc1WKZQkAOEWF83ljcLZ";
 
         protected MainActivity MainActivityObj;
         protected Internet InternetObj;
@@ -421,8 +499,10 @@ public class MainActivity extends ActionBarActivity {
         protected CustomStack<String> postidstack;
         protected CustomStack<String> WebViewDataStack;
         protected int ImagesFound = 0;
+        protected int OAuthStep = 0;
 
         private ProgressDialog ProgressDialogObj = null;
+        private String form_key = "";
 
         //--------------------------------------------------------------------------------------------------
         public Tumblr( MainActivity mainactivityobj , Internet internetobj )
@@ -435,46 +515,6 @@ public class MainActivity extends ActionBarActivity {
             UrlStack = new CustomStack<String>();
             ResponseStack = new CustomStack<String>();
             WebViewDataStack = new CustomStack<String>();
-        }
-        //--------------------------------------------------------------------------------------------------
-        public String repeat(String str, int times) {
-            if (str == null) return null;
-
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0 ; i < times ; i ++) {
-                sb.append(str);
-            }
-            return sb.toString();
-        }
-        //--------------------------------------------------------------------------------------------------
-        public String StrCut( String strhead, String strtail, String[] str )
-        {
-            int length1 = strhead.length();
-            int length2 = strtail.length();
-
-            int indexstart = str[0].indexOf(strhead);
-            int indexend = str[0].indexOf(strtail, indexstart + length1);
-
-
-            if ( indexstart >= 0 && indexend > indexstart )
-            {
-
-                String substrout = str[0].substring(indexstart + length1, indexend );
-                String substrdelete = str[0].substring(indexstart, indexend + length2 );
-                String spacestr = " ";
-
-                spacestr = repeat(spacestr, substrdelete.length());
-
-                str[0] = str[0].replaceFirst( Pattern.quote(substrdelete), spacestr );
-
-                if( substrout == null )
-                    substrout = "";
-
-                return substrout;
-            }
-            else
-                return null;
-
         }
         //--------------------------------------------------------------------------------------------------
         public int StrCountChar(String mainstr, String substr)
@@ -518,17 +558,14 @@ public class MainActivity extends ActionBarActivity {
 
             SearchType = searchtype;
             KeyWordStr = keywordstr;
+            String[] headerout = { "" };
 
             String url = "", PeekLastStr = UrlStack.PeekLast();
             ItsTimerTask.SetSpeed(1);
 
             if( searchtype == RESET_SEARCH )
             {
-                blogidstack = new CustomStack<String>();
-                postidstack = new CustomStack<String>();
-                UrlStack = new CustomStack<String>();
-                ResponseStack = new CustomStack<String>();
-                WebViewDataStack = new CustomStack<String>();
+                ClearStacks();
                 return;
             }
 
@@ -617,9 +654,7 @@ public class MainActivity extends ActionBarActivity {
                 if( PeekLastStr.indexOf( "***FINISHED***" ) >= 0 )
                 {
                     //PopAddTumblrWebView(5);
-                    UrlStack.PopLast();
-                    UrlStack = new CustomStack<String>();
-                    ResponseStack = new CustomStack<String>();
+                    ClearStacks();
                 }
             }
             else
@@ -668,6 +703,7 @@ public class MainActivity extends ActionBarActivity {
                 {
                     ProgressDialogObj.dismiss();
                     ItsTimerTask.SetSpeed(10);
+
                     String buffer[] = { ResponseStack.PopLast() };
 
                     url = UrlStack.PeekLast();
@@ -702,9 +738,7 @@ public class MainActivity extends ActionBarActivity {
                 if( PeekLastStr.indexOf( "***FINISHED***" ) >= 0 )
                 {
                     //PopAddTumblrWebView(5);
-                    UrlStack.PopLast();
-                    UrlStack = new CustomStack<String>();
-                    ResponseStack = new CustomStack<String>();
+                    ClearStacks();
                 }
             }
             else
@@ -755,14 +789,19 @@ public class MainActivity extends ActionBarActivity {
                     else
                         PopAddTumblrWebView(3);
 
-                    blogidstack = new CustomStack<String>();
-                    postidstack = new CustomStack<String>();
-                    UrlStack = new CustomStack<String>();
-                    ResponseStack = new CustomStack<String>();
+                    ClearStacks();
                 }
             }
 
             ItsTimerTask.SetSpeed(1);
+        }
+        //--------------------------------------------------------------------------------------------------
+        protected void ClearStacks()
+        {
+            blogidstack = new CustomStack<String>();
+            postidstack = new CustomStack<String>();
+            UrlStack = new CustomStack<String>();
+            ResponseStack = new CustomStack<String>();
         }
         //--------------------------------------------------------------------------------------------------
         public void PopAddTumblrWebView( int count )
@@ -912,39 +951,307 @@ public class MainActivity extends ActionBarActivity {
         //--------------------------------------------------------------------------------------------------
         public void Do()
         {
+
+
             if( InternetObj.ByteArrayListStatus[0] == Internet.STATUS_DONE )
             {
+                String buffer[] = { "" };
                 InternetObj.ByteArrayListStatus[0] = Internet.STATUS_EMPTY;
-
-                String buffer = "";
 
                 try
                 {
-                    buffer =  new String(InternetObj.ByteArrayList[0], "UTF-8");
-                    buffer = InternetObj.Decode(buffer);
+                    buffer[0] =  new String(InternetObj.ByteArrayList[0], "UTF-8");
+                    buffer[0] = InternetObj.Decode(buffer[0]);
                 }
                 catch (UnsupportedEncodingException e)
                 {
                     e.printStackTrace();
                 }
 
-                ResponseStack.PushLast( buffer );
-                Search( KeyWordStr, SearchType );
-
-
+                if( buffer[0].length() >= 60 )
+                {
+                    ResponseStack.PushLast( buffer[0] );
+                    Search( KeyWordStr, SearchType );
+                }
+                else
+                {
+                    if( ProgressDialogObj != null )
+                        ProgressDialogObj.dismiss();
+                    AddErrorPage();
+                    ClearStacks();
+                }
+                return;
             }
             else
             if( InternetObj.ByteArrayListStatus[0] == Internet.STATUS_NULL_STREAM )
             {
+                String buffer[] = { "" };
                 InternetObj.ByteArrayListStatus[0] = Internet.STATUS_EMPTY;
                 ResponseStack.PushLast( "" );
 
                 if( ProgressDialogObj != null )
                     ProgressDialogObj.dismiss();
 
-                AddErrorPage();
+                //AddErrorPage();
+                ClearStacks();
 
                 //Search( KeyWordStr, SearchType );
+                return;
+            }
+
+            if( InternetObj.ByteArrayListStatus[1] == Internet.STATUS_DONE )
+            {
+                String buffer[] = { "" };
+                InternetObj.ByteArrayListStatus[1] = Internet.STATUS_EMPTY;
+
+                try
+                {
+                    buffer[0] =  new String(InternetObj.ByteArrayList[1], "UTF-8");
+                    buffer[0] = InternetObj.Decode(buffer[0]);
+                }
+                catch (UnsupportedEncodingException e)
+                {
+                    e.printStackTrace();
+                }
+
+                if( InternetObj.HeaderList == null )
+                    throw new RuntimeException( "InternetObj.HeaderList nullpointer!" );
+                if( InternetObj.HeaderList[1] == null )
+                    throw new RuntimeException( "InternetObj.HeaderList[1] nullpointer!" );
+                if( InternetObj.HeaderList[1][0] == null )
+                    throw new RuntimeException( "InternetObj.HeaderList[1][0] nullpointer!" );
+                if( InternetObj.ByteArrayList[1] == null )
+                    throw new RuntimeException( "InternetObj.ByteArrayList[1] nullpointer!" );
+
+                if( InternetObj.HeaderList[1][0].length() > 1 || buffer[0].length() > 1 )
+                {
+                    OAuthDo( buffer[0] );
+                }
+                else
+                {
+                    buffer[0] = "Connection error!" + "(" + OAuthStep + ")";
+                    MainActivityObj.AddTumblrWebView( buffer );
+                }
+                return;
+            }
+            else
+            if( InternetObj.ByteArrayListStatus[1] == Internet.STATUS_NULL_STREAM )
+            {
+                String buffer[] = { "" };
+                InternetObj.ByteArrayListStatus[1] = Internet.STATUS_EMPTY;
+
+                //AddErrorPage();
+
+                if( InternetObj.HeaderList == null )
+                    throw new RuntimeException( "InternetObj.HeaderList nullpointer!!" );
+                if( InternetObj.HeaderList[1] == null )
+                    throw new RuntimeException( "InternetObj.HeaderList[1] nullpointer!!" );
+                if( InternetObj.HeaderList[1][0] == null )
+                    throw new RuntimeException( "InternetObj.HeaderList[1][0] nullpointer!!" );
+                if( InternetObj.ByteArrayList[1] == null )
+                    throw new RuntimeException( "InternetObj.ByteArrayList[1] nullpointer!" );
+
+                buffer[0] = "Status null stream: [" + InternetObj.HeaderList[1][0] + "] [" + buffer[0] + "]";
+                MainActivityObj.AddTumblrWebView( buffer );
+                return;
+            }
+
+        }
+        //--------------------------------------------------------------------------------------------------
+        public void OAuthDo( String inputbuffer )
+        {
+
+            String args = "", url = "";
+            String[] redirecturl = { "" };
+            String[] outputstr = { "" };
+            String[] inputbuffercopy = { new String(inputbuffer) };
+
+            if( OAuthStep == -5 )
+            {
+                url = "https://posttestserver.com/post.php";
+                InternetObj.GotoUrl( url, Internet.HTTP_POST, "argument%5B1%5D=1&argument%5B2%5D=2&argument%5B1%5D=3&feces=14", (short)1 );
+                OAuthStep++;
+
+            }
+            else
+            if( OAuthStep == -4 )
+            {
+                outputstr[0] = InternetObj.HeaderList[1][0] + ";" + inputbuffer;
+                MainActivityObj.AddTumblrWebView(outputstr);
+
+                OAuthStep = -1;
+            }
+            else
+            if( OAuthStep == 0 )
+            {
+                url = "https://www.tumblr.com/login";
+                InternetObj.GotoUrl( url, Internet.HTTP_GET, "", (short)1 );
+                OAuthStep++;
+            }
+            else
+            if( OAuthStep == 1 )
+            {
+                outputstr[0] = "***[1]***" +  InternetObj.HeaderList[1][0] + ";" + InternetObj.ItsCookie + ";";
+                MainActivityObj.AddTumblrWebView(outputstr);
+
+                if( inputbuffer.indexOf("determine_email") >= 0 )
+                {
+                    String useremail = urlencode("blank email");
+                    String userpassword = "";
+                    form_key = urlencode(StrCut( "name=\"form_key\" value=\"", "\"", inputbuffercopy ));
+
+                    args = "determine_email=" + useremail + "&user%5Bemail%5D=&user%5Bpassword%5D=" + userpassword
+                            + "&tumblelog%5Bname%5D=&user%5Bage%5D=&context=no_referer&version=STANDARD&follow="
+                            + "&form_key=" + form_key + "&seen_suggestion=0&used_suggestion=0&used_auto_suggestion=0"
+                            + "&about_tumblr_slide=&random_username_suggestions=" + urlencode("[\"RainyHarmonyCollector\",\"AnnoyingGladiatorStudent\",\"NumberOneBouquetWonderland\",\"InstantPersonCollection\",\"ImpossibleUnknownCollection\"]")
+                            + "action=signup_determine&tracking_url=" + urlencode("/login") + "&tracking_version=modal";
+
+                    url = "https://www.tumblr.com/svc/account/register";
+
+                    outputstr[0] = "1 - " + args;
+/*
+    if( inputbuffer.indexOf("captcha") >= 0 )
+     	outputstr[0] += args + "[captcha encountered!]";
+*/
+                    MainActivityObj.AddTumblrWebView(outputstr);
+
+                    InternetObj.GotoUrl( url, Internet.HTTP_POST, args, (short)1 );
+                    OAuthStep++;
+                }
+                else
+                    OAuthStep = -1;
+            }
+            else
+            if( OAuthStep == 2 )
+            {
+                outputstr[0] = "***[2]***" +  InternetObj.HeaderList[1][0] + ";" + InternetObj.ItsCookie + ";";
+                MainActivityObj.AddTumblrWebView(outputstr);
+
+                if( inputbuffer.indexOf("next_view\":\"signup_login\"}") >= 0 )
+                {
+                    String useremail = urlencode("blank email");
+                    String userpassword = urlencode("blank pasword");
+
+                    args = "determine_email=" + useremail + "&user%5Bemail%5D=" + useremail + "&user%5Bpassword%5D=" + userpassword
+                            + "&tumblelog%5Bname%5D=&user%5Bage%5D=&context=no_referer&version=STANDARD&follow="
+                            + "&form_key=" + form_key + "&seen_suggestion=0&used_suggestion=0&used_auto_suggestion=0"
+                            + "&about_tumblr_slide=&random_username_suggestions=" + urlencode("[\"EclecticStarlightDonut\",\"CasuallyAutomaticNight\",\"CasuallyGenerousGlitter\",\"DangerouslyCoolVoid\",\"DelectablyImpossibleCherryblossom\"]");
+
+                    url = "https://www.tumblr.com/login";
+
+                    outputstr[0] = "1 - " + args;
+/*
+    if( inputbuffer.indexOf("captcha") >= 0 )
+     	outputstr[0] += args + "[captcha encountered!]";
+*/
+                    MainActivityObj.AddTumblrWebView(outputstr);
+
+                    InternetObj.GotoUrl( url, Internet.HTTP_POST, args, (short)1 );
+                    OAuthStep++;
+                }
+                else
+                    OAuthStep = -1;
+            }
+            else
+            if( OAuthStep == 3 )
+            {
+                outputstr[0] = "***[3]***" +  InternetObj.HeaderList[1][0] + ";" + InternetObj.ItsCookie;
+                outputstr[0] = outputstr[0].replace( "<", "(" );
+                outputstr[0] = outputstr[0].replace( ">", ")" );
+                MainActivityObj.AddTumblrWebView(outputstr);
+
+                if( inputbuffer.indexOf("dashboard-context") >= 0 )
+                {
+                    //outputstr[0] = "***[2]***" +  InternetObj.HeaderList[1][0] + ";";
+                    //MainActivityObj.AddTumblrWebView(outputstr);
+
+                    url = "https://api.tumblr.com/console/auth";
+                    args = "consumer_key=" + consumer_key + "&consumer_secret=" + consumer_secret;
+
+                    InternetObj.GotoUrl( url, Internet.HTTP_POST, args, (short)1 );
+                    OAuthStep++;
+
+                    outputstr[0] = outputstr[0].replace( "<", "(" );
+                    outputstr[0] = outputstr[0].replace( ">", ")" );
+                }
+                else
+                    OAuthStep = -1;
+            }
+            else
+            if( OAuthStep == 4 )
+            {
+                outputstr[0] = "***[3]***" +  InternetObj.HeaderList[1][0] + ";";
+                MainActivityObj.AddTumblrWebView(outputstr);
+
+                if( InternetObj.HeaderList[1][0] != null )
+                    if( InternetObj.HeaderList[1][0].indexOf("Location") >= 0 )
+                    {
+                        redirecturl[0] = StrCut("Location, [", "]", InternetObj.HeaderList[1] );
+                        args = "consumer_key=" + consumer_key + "&consumer_secret=" + consumer_secret;
+                        InternetObj.GotoUrl( redirecturl[0], Internet.HTTP_POST, args, (short)1 );
+                        MainActivityObj.AddTumblrWebView(redirecturl);
+                        OAuthStep++;
+                    }
+                //else
+                OAuthStep = -1;
+/*
+	String headerstr;
+	String bufferstr;
+
+	if( InternetObj.HeaderList[1][0] == null )
+		headerstr = "[EMPTY HEADER]";
+	else
+		headerstr = InternetObj.HeaderList[1][0];
+
+	if( OAuthDoInputBuffer == null )
+		bufferstr = "[EMPTY BUFFER]";
+	else
+		bufferstr = new String(OAuthDoInputBuffer);
+
+	String[] teststr = { new String(InternetObj.HeaderList[1][0] + bufferstr ) };
+    teststr[0] = teststr[0] .replace( "<", "(" );
+	teststr[0]= teststr[0] .replace( ">", ")" );
+*/
+
+	/*
+	outputstr[0] = StrCut("<form","</form>",teststr);
+	outputstr[0] = StrCut("<form","</form>",teststr);
+
+	outputstr[0] = outputstr[0].replace( "<", "(" );
+	outputstr[0] = outputstr[0].replace( ">", ")" );
+	*/
+                //String form_key = StrCut( "<input type=\"hidden\" name=\"form_key\" value=\"", "\"", OAuthDoInputBuffer );
+                //String oauth_token = StrCut( "name=\"oauth_token\" value=\"", "\"", OAuthDoInputBuffer );
+	/*
+	if( form_key != null && oauth_token != null )
+	{
+	   args = "allow=&form_key=" + form_key + "&oauth_token=" + oauth_token;
+	   url = "https://www.tumblr.com/oauth/authorize?oauth_token=" + oausth_token;
+	   InternetObj.GotoUrl( url, Internet.HTTP_POST, args, (short)1 );
+	   OAuthStep++;
+	}
+	else
+	  throw new RuntimeException( "form_key OR oauth_token is null! [" + args +  "]" );
+	  MainActivityObj.AddTumblrWebView(teststr);
+		*/
+
+
+            }
+            else
+            if( OAuthStep == 5 )
+            {
+                String[] formstr = { StrCut("<form","</form>", inputbuffercopy) };
+
+                //formstr[0] = formstr[0].replace( "<", "(" );
+                //formstr[0] = formstr[0].replace( ">", ")" );
+                formstr[0] = InternetObj.HeaderList[1][0]; //+ formstr[0];
+
+                formstr[0] = formstr[0].replace( "<", "(" );
+                formstr[0] = formstr[0].replace( ">", ")" );
+
+                //String[] formstr = { InternetObj.HeaderList[1][0] };
+                MainActivityObj.AddTumblrWebView( formstr );
+                OAuthStep++;
             }
         }
 //--------------------------------------------------------------------------------------------------
@@ -1054,12 +1361,54 @@ public class MainActivity extends ActionBarActivity {
         else
         if( id == R.id.action_about )
         {
+            TumblrObj.OAuthStep = 0;
+            TumblrObj.OAuthDo("");
             returnflag = true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    //--------------------------------------------------------------------------------------------------
+    public String repeat(String str, int times) {
+        if (str == null) return null;
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0 ; i < times ; i ++) {
+            sb.append(str);
+        }
+        return sb.toString();
+    }
+    //--------------------------------------------------------------------------------------------------
+    public String StrCut( String strhead, String strtail, String[] str )
+    {
+        int length1 = strhead.length();
+        int length2 = strtail.length();
+
+        int indexstart = str[0].indexOf(strhead);
+        int indexend = str[0].indexOf(strtail, indexstart + length1);
+
+
+        if ( indexstart >= 0 && indexend > indexstart )
+        {
+
+            String substrout = str[0].substring(indexstart + length1, indexend );
+            String substrdelete = str[0].substring(indexstart, indexend + length2 );
+            String spacestr = " ";
+
+            spacestr = repeat(spacestr, substrdelete.length());
+
+            str[0] = str[0].replaceFirst( Pattern.quote(substrdelete), spacestr );
+
+            if( substrout == null )
+                substrout = "";
+
+            return substrout;
+        }
+        else
+            return null;
+
+    }
     //--------------------------------------------------------------------------------------------------
     private boolean CheckInternetConnection() {
         // get Connectivity Manager object to check connection
