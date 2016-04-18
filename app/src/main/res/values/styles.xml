@@ -15,6 +15,30 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+         <item name="colorAccent">#FFFFFF</item>
+         <item name="android:textColorSecondary">#FFFFFF</item>
+    </style>
+    
+    
+<style name="ButtonStyle" parent="@android:style/Widget.Button.Small">
+    <item name="android:textColor">#FFFFFF</item>
+    <item name="android:textSize">12sp</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:layout_marginLeft">10dp</item>
+
+</style>
+
+<style name="CheckBoxStyle" parent="@Theme.AppCompat" >
+<item name="android:textColor">#FFFFFF</item>
+ <item name="android:textSize">12sp</item>
+<item name="android:textStyle">bold</item>
+<item name="android:layout_marginLeft">10dp</item>
+
+</style>
+
+   <style name="AlertDialogCustom" parent="@Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowMinWidthMajor">30%</item>
+        <item name="android:windowMinWidthMinor">50%</item>     
     </style>
 
 </resources>

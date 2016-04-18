@@ -1,6 +1,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:orientation="vertical" 
     android:id="@+id/ScrollView1"
     android:background="#35465c" >
 
@@ -25,16 +26,17 @@
         <EditText
             android:id="@+id/EditText1"
             android:layout_width="match_parent"
-            android:layout_height="24dip"
+            android:layout_height="48dip"
             android:ems="10" 
-            android:background="#FFFFFF" 
             android:singleLine="true"
+            android:background="@drawable/edittext"
             >
         </EditText>    
         
         <Button
             android:id="@+id/button1"
-            style="?android:attr/buttonStyleSmall"
+            android:background="@drawable/button"
+            style="@style/ButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Explore" 
@@ -44,7 +46,8 @@
 
         <Button
             android:id="@+id/button2"
-            style="?android:attr/buttonStyleSmall"
+            android:background="@drawable/button"
+            style="@style/ButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tag Search" 
@@ -55,7 +58,8 @@
         
         <Button
             android:id="@+id/button3"
-            style="?android:attr/buttonStyleSmall"
+            android:background="@drawable/button"
+            style="@style/ButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Author Search" 
@@ -63,6 +67,17 @@
             android:layout_toRightOf="@+id/button2"
             android:layout_marginTop="5dp"
             />                
+            
+    <CheckBox android:id="@+id/checkbox1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+         android:background="@drawable/checkbox"
+         android:layout_below="@+id/EditText1"
+         android:layout_toRightOf="@+id/button3"        
+         android:text="Big Images" 
+         style="@style/CheckBoxStyle"
+         android:layout_marginTop="5dp"
+       />         
 </RelativeLayout>
 
     <LinearLayout

@@ -12,6 +12,10 @@
         "source": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\drawable\\abc_btn_borderless_material.xml"
     },
     {
+        "merged": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\edittext.xml",
+        "source": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\src\\main\\res\\drawable\\edittext.xml"
+    },
+    {
         "merged": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\abc_text_cursor_material.xml",
         "source": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\drawable\\abc_text_cursor_material.xml"
     },
@@ -46,6 +50,14 @@
     {
         "merged": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\abc_cab_background_top_material.xml",
         "source": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\drawable\\abc_cab_background_top_material.xml"
+    },
+    {
+        "merged": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\ic_launcher.png",
+        "source": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\src\\main\\res\\drawable\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\button.xml",
+        "source": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\src\\main\\res\\drawable\\button.xml"
     },
     {
         "merged": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\abc_btn_default_mtrl_shape.xml",
@@ -84,12 +96,12 @@
         "source": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\drawable\\abc_switch_thumb_material.xml"
     },
     {
-        "merged": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\abc_item_background_holo_dark.xml",
-        "source": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\drawable\\abc_item_background_holo_dark.xml"
-    },
-    {
         "merged": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\abc_list_selector_holo_dark.xml",
         "source": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\drawable\\abc_list_selector_holo_dark.xml"
+    },
+    {
+        "merged": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\abc_item_background_holo_dark.xml",
+        "source": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\drawable\\abc_item_background_holo_dark.xml"
     },
     {
         "merged": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\abc_btn_check_material.xml",
@@ -98,6 +110,10 @@
     {
         "merged": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\abc_spinner_textfield_background_material.xml",
         "source": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.2.1\\res\\drawable\\abc_spinner_textfield_background_material.xml"
+    },
+    {
+        "merged": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\checkbox.xml",
+        "source": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\src\\main\\res\\drawable\\checkbox.xml"
     },
     {
         "merged": "C:\\Users\\Inexis\\StudioProjects\\TumblrSurfer\\app\\build\\intermediates\\res\\merged\\debug\\drawable\\abc_textfield_search_material.xml",

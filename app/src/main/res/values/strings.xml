@@ -3,7 +3,7 @@
 
     <string name="app_name">Tumblr Surfer</string>
     <string name="action_clear_search">Clear Search</string>
-    <string name="action_save_images">Save Images</string>
+    <string name="action_save_images">Save All Images</string>
     <string name="action_about">About</string>
 
 </resources>

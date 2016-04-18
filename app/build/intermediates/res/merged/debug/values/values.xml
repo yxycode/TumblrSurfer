@@ -212,11 +212,15 @@
     <string name="abc_toolbar_collapse_description">Collapse</string>
     <string name="action_about">About</string>
     <string name="action_clear_search">Clear Search</string>
-    <string name="action_save_images">Save Images</string>
+    <string name="action_save_images">Save All Images</string>
     <string name="app_name">Tumblr Surfer</string>
     <string name="status_bar_notification_info_overflow">999+</string>
     <style name="AlertDialog.AppCompat" parent="Base.AlertDialog.AppCompat"/>
     <style name="AlertDialog.AppCompat.Light" parent="Base.AlertDialog.AppCompat.Light"/>
+    <style name="AlertDialogCustom" parent="@Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowMinWidthMajor">30%</item>
+        <item name="android:windowMinWidthMinor">50%</item>     
+    </style>
     <style name="Animation.AppCompat.Dialog" parent="Base.Animation.AppCompat.Dialog"/>
     <style name="Animation.AppCompat.DropDownUp" parent="Base.Animation.AppCompat.DropDownUp"/>
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
@@ -228,6 +232,8 @@
     </style>
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+         <item name="colorAccent">#FFFFFF</item>
+         <item name="android:textColorSecondary">#FFFFFF</item>
     </style>
     <style name="Base.AlertDialog.AppCompat" parent="android:Widget">
         <item name="android:layout">@layout/abc_alert_dialog_material</item>
@@ -1184,6 +1190,20 @@
         <item name="android:minWidth">56dp</item>
         <item name="android:scaleType">center</item>
     </style>
+    <style name="ButtonStyle" parent="@android:style/Widget.Button.Small">
+    <item name="android:textColor">#FFFFFF</item>
+    <item name="android:textSize">12sp</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:layout_marginLeft">10dp</item>
+
+</style>
+    <style name="CheckBoxStyle" parent="@Theme.AppCompat">
+<item name="android:textColor">#FFFFFF</item>
+ <item name="android:textSize">12sp</item>
+<item name="android:textStyle">bold</item>
+<item name="android:layout_marginLeft">10dp</item>
+
+</style>
     <style name="Platform.AppCompat" parent="android:Theme">
         <item name="android:windowNoTitle">true</item>
 
